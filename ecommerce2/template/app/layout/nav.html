@@ -1,0 +1,166 @@
+
+{% load static %}
+
+<!-- HEADER -->
+<header>
+    <!-- TOP HEADER -->
+    <!-- <div id="top-header">
+        <div class="container">
+            <ul class="header-links pull-left">
+                <li><a href="#"><i class="fa fa-phone"></i> +021-95-51-84</a></li>
+                <li><a href="#"><i class="fa fa-envelope-o"></i> email@email.com</a></li>
+                <li><a href="#"><i class="fa fa-map-marker"></i> 1734 Stonecoal Road</a></li>
+            </ul>
+            <ul class="header-links pull-right">
+                <li><a href="#"><i class="fa fa-dollar"></i> USD</a></li>
+                <li><a href="#"><i class="fa fa-user-o"></i> My Account</a></li>
+            </ul>
+        </div>
+    </div> -->
+    <!-- /TOP HEADER -->
+
+    <!-- MAIN HEADER -->
+    <div id="header">
+        <!-- container -->
+        <div class="container">
+            <!-- row -->
+            <div class="row">
+                <!-- LOGO -->
+                <div class="col-md-3">
+                    <div class="header-logo">
+                        <a href="#" class="logo">
+                            <img src="{% static './img/logo.png' %}" alt="">
+                        </a>
+                    </div>
+                </div>
+                <!-- /LOGO -->
+
+                <!-- SEARCH BAR -->
+                <div class="col-md-6">
+                    
+                </div>
+                <!-- /SEARCH BAR -->
+
+                <!-- ACCOUNT -->
+                <div class="col-md-3 clearfix">
+                    <div class="header-ctn">
+                        <!-- Wishlist -->
+                        <div id="wishlist-info">
+                            <a href="{% url 'wishlist' %}">
+                                <i class="fa fa-heart-o"></i>
+                                <span>Your Wishlist</span>
+                                <div class="qty" id="wishlist-qty">0</div>
+                            </a>
+                        </div>
+                        <!-- /Wishlist -->
+
+                        <!-- Cart -->
+                        <div class="dropdown">
+                            
+                            <a id="cart-dropdown" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                <i class="fa fa-shopping-cart"></i>
+                                <span>Your Cart</span>
+                                <div id="cart-qty" class="qty">0</div>
+                            </a>
+                            <div class="cart-dropdown">
+                                <div class="cart-btns">
+                                    <a href="{% url 'cart_view' %}">View Cart</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /Cart -->
+
+                        <!-- Menu Toogle -->
+                        <div class="menu-toggle">
+                            <a href="#">
+                                <i class="fa fa-bars"></i>
+                                <span>Menu</span>
+                            </a>
+                        </div>
+                        <!-- /Menu Toogle -->
+                    </div>
+                </div>
+                <!-- /ACCOUNT -->
+            </div>
+            <!-- row -->
+        </div>
+        <!-- container -->
+    </div>
+    <!-- /MAIN HEADER -->
+</header>
+<!-- /HEADER -->
+<!-- NAVIGATION -->
+<nav id="navigation">
+    <!-- container -->
+    <div class="container">
+        <!-- responsive-nav -->
+        <div id="responsive-nav">
+            <!-- NAV -->
+            <ul class="main-nav nav navbar-nav">
+                <li><a href="{% url 'index' %}">Home</a></li>
+                <li><a href="{% url 'store' %}">Store</a></li>
+                <li><a href="{% url 'laptop' id=2 %}">Laptops</a></li>
+                <li><a href="{% url 'mobile' id=3 %}">Smartphones</a></li>
+                <li><a href="{% url 'camera' id=5 %}">Cameras</a></li>
+                <li><a href="{% url 'accessories' id=6 %}">Accessories</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'signout' %}">SIGNOUT</a></li>
+                           
+                {% else %}
+                <li><a href="{% url 'register' %}">SIGNUP</a></li>
+                <li><a href="{% url 'signin' %}">LOGIN</a></li>
+                {% endif %}
+            </ul>
+            <!-- /NAV -->
+        </div>
+        <!-- /responsive-nav -->
+    </div>
+    <!-- /container -->
+</nav>
+<!-- /NAVIGATION -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    // Function to fetch cart items and update quantity
+    function updateCartQuantity() {
+            $.ajax({
+                url: "{% url 'get_cart_items' %}",
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    $('#cart-qty').text(data.total_quantity);
+                },
+                error: function(xhr, errmsg, err) {
+                    console.log(errmsg);
+                }
+            });
+        }
+
+        
+        $(document).ready(function() {
+            updateCartQuantity();
+        });
+
+        function updateWishlistQuantity() {
+            $.ajax({
+                url: "{% url 'get_wishlist_items' %}",
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    $('#wishlist-qty').text(data.total_quantity);
+                },
+                error: function(xhr, errmsg, err) {
+                    console.log(errmsg);
+                }
+            });
+        }
+
+        
+        $(document).ready(function() {
+            updateWishlistQuantity();
+        });
+    
+    
+    
+</script>

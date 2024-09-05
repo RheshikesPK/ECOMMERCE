@@ -1,0 +1,349 @@
+
+{% extends 'app/layout/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+	<!-- row -->
+	<div class="row">
+		<!-- LOGO -->
+		<div class="col-md-3">
+			
+		</div>
+		<!-- /LOGO -->
+
+		<!-- SEARCH BAR -->
+		<div class="col-md-6">
+			<div class="header-search">
+				<form>
+					
+					<input class="input" id="search" placeholder="Search here">
+					<button class="search-btn">Search</button>
+					
+				</form>
+			</div>
+			<div class="table-container">
+			<table class="table">
+				<tbody id="results-body">
+					
+				</tbody>
+			</table>
+			</div>
+		</div>
+		<!-- /SEARCH BAR -->
+
+		<!-- ACCOUNT -->
+		<div class="col-md-3 clearfix">
+			
+		</div>
+		<!-- /ACCOUNT -->
+	</div>
+	<!-- row -->
+</div>
+
+<div class="section">
+	<!-- container -->
+	<div class="container">
+		<!-- row -->
+		<div class="row">
+
+			<!-- section title -->
+			<div class="col-md-12">
+				<div class="section-title">
+					<h3 class="title">Categories</h3>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+		<!-- SECTION -->
+		<div class="section">
+			<!-- container -->
+			<div class="container">
+				<!-- row -->
+				<div class="row">
+					<!-- shop -->
+					<div class="col-md-3 col-xs-6">
+						<div class="shop">
+							<div class="shop-img">
+								<img src="{% static 'img/shop01.png' %}" alt="">
+							</div>
+							<div class="shop-body">
+								<h3>Laptop<br>Collection</h3>
+								<a href="{% url 'laptop' id=2 %}" class="cta-btn">Shop now <i class="fa fa-arrow-circle-right"></i></a>
+							</div>
+						</div>
+					</div>
+					<!-- /shop -->
+
+					<!-- shop -->
+					<div class="col-md-3 col-xs-6">
+						<div class="shop">
+							<div class="shop-img">
+								<img src="{% static './img/shop03.png' %}" alt="">
+							</div>
+							<div class="shop-body">
+								<h3>Accessories<br>Collection</h3>
+								<a href="{% url 'accessories' id=6 %}" class="cta-btn">Shop now <i class="fa fa-arrow-circle-right"></i></a>
+							</div>
+						</div>
+					</div>
+					<!-- /shop -->
+
+					<!-- shop -->
+					<div class="col-md-3 col-xs-6">
+						<div class="shop">
+							<div class="shop-img">
+								<img src="{% static './img/shop02.png' %}" alt="">
+							</div>
+							<div class="shop-body">
+								<h3>Cameras<br>Collection</h3>
+								<a href="{% url 'camera' id=5 %}" class="cta-btn">Shop now <i class="fa fa-arrow-circle-right"></i></a>
+							</div>
+						</div>
+					</div>
+					<!-- /shop -->
+
+					<div class="col-md-3 col-xs-6">
+						<div class="shop">
+							<div class="shop-img">
+								<img src="{% static 'img/shop01.png' %}" alt="">
+							</div>
+							<div class="shop-body">
+								<h3>Mobile<br>Collection</h3>
+								<a href="{% url 'mobile' id=3 %}" class="cta-btn">Shop now <i class="fa fa-arrow-circle-right"></i></a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /row -->
+			</div>
+			<!-- /container -->
+		</div>
+		<!-- /SECTION -->
+
+		<!-- SECTION -->
+		<div class="section">
+    <!-- container -->
+    <div class="container">
+        <!-- row -->
+        <div class="row">
+
+            <!-- section title -->
+            <div class="col-md-12">
+                <div class="section-title">
+                    <h3 class="title">New Products</h3>
+                </div>
+            </div>
+            <!-- /section title -->
+
+            <!-- Products tab & slick -->
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="products-tabs">
+                        <!-- tab -->
+                        <div id="tab1" class="tab-pane active">
+                            <div class="products-slick" data-nav="#slick-nav-1">
+                                <!-- Product loop -->
+                                {% for product in new_products %}
+                                <div class="product">
+                                    <div class="product-img">
+                                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                                        <div class="product-label">
+                                            {% if product.discount_percentage %}
+                                            <span class="sale">-{{ product.discount_percentage }}%</span>
+                                            {% endif %}
+                                            {% if product.is_new %}
+                                            <span class="new">NEW</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="product-body">
+                                        <p class="product-category">{{ product.category.name }}</p>
+                                        <h3 class="product-name"><a href="{% url 'product' product.id %}">{{ product.name }}</a></h3>
+                                        <h4 class="product-price">${{ product.price }} {% if product.old_price %}<del class="product-old-price">${{ product.old_price }}</del>{% endif %}</h4>
+                                        
+                                        
+                                    </div>
+                                    <div class="add-to-cart">
+                                        <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i><a href="{% url 'add_to_cart' product.id %}">add to cart</a></button>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                <!-- End Product loop -->
+                            </div>
+                            <div id="slick-nav-1" class="products-slick-nav"></div>
+                        </div>
+                        <!-- /tab -->
+                    </div>
+                </div>
+            </div>
+            <!-- /Products tab & slick -->
+        </div>
+        <!-- /row -->
+    </div>
+    <!-- /container -->
+</div>
+		<!-- /SECTION -->
+
+		<!-- HOT DEAL SECTION -->
+		<div id="hot-deal" class="section">
+			<!-- container -->
+			<div class="container">
+				<!-- row -->
+				<div class="row">
+					<div class="col-md-12">
+						<div class="hot-deal">
+							<ul class="hot-deal-countdown">
+								<li>
+									<div>
+										<h3>02</h3>
+										<span>Days</span>
+									</div>
+								</li>
+								<li>
+									<div>
+										<h3>10</h3>
+										<span>Hours</span>
+									</div>
+								</li>
+								<li>
+									<div>
+										<h3>34</h3>
+										<span>Mins</span>
+									</div>
+								</li>
+								<li>
+									<div>
+										<h3>60</h3>
+										<span>Secs</span>
+									</div>
+								</li>
+							</ul>
+							<h2 class="text-uppercase">hot deal this week</h2>
+							<p>New Collection Up to 50% OFF</p>
+							<a class="primary-btn cta-btn" href="{% url 'store' %}">Shop now</a>
+						</div>
+					</div>
+				</div>
+				<!-- /row -->
+			</div>
+			<!-- /container -->
+		</div>
+		<!-- /HOT DEAL SECTION -->
+
+		<!-- SECTION -->
+		<div class="section">
+			<!-- container -->
+			<div class="container">
+				<!-- row -->
+				<div class="row">
+
+					<!-- section title -->
+					<div class="col-md-12">
+						<div class="section-title">
+							<h3 class="title">Top selling</h3>
+							<div class="section-nav">
+							</div>
+						</div>
+					</div>
+					<!-- /section title -->
+
+					<!-- Products tab & slick -->
+					
+
+<div class="col-md-12">
+    <div class="row">
+        <div class="products-tabs">
+            <!-- tab -->
+            <div id="tab2" class="tab-pane fade in active">
+                <div class="products-slick" data-nav="#slick-nav-2">
+                    <!-- Display top selling product -->
+                    <div class="product">
+                        <div class="product-img">
+                            <img src="{{ top_selling_product.image.url }}" alt="{{ top_selling_product.name }}">
+                            
+                        </div>
+                        <div class="product-body">
+                            <p class="product-category">{{ top_selling_product.category }}</p>
+                            <h3 class="product-name"><a href="{% url 'product' top_selling_product.id %}">{{ top_selling_product.name }}</a></h3>
+                            <h4 class="product-price">${{ top_selling_product.price }} <del class="product-old-price">${{ top_selling_product.old_price }}</del></h4>
+                            
+                            
+                        </div>
+                        <div class="add-to-cart">
+                            <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> <a href="{% url 'add_to_cart' top_selling_product.id %}">add to cart</a></button>
+                        </div>
+                    </div>
+                    <!-- /top selling product -->
+
+                    <!-- Loop through other top products -->
+                    {% for product in other_top_products %}
+                    <div class="product">
+                        <div class="product-img">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                            <div class="product-label">
+                            </div>
+                        </div>
+                        <div class="product-body">
+                            <p class="product-category">{{ product.category }}</p>
+                            <h3 class="product-name"><a href="{% url 'product' product.id %}">{{ product.name }}</a></h3>
+                            <h4 class="product-price">${{ product.price }} <del class="product-old-price">${{ product.old_price }}</del></h4>                  
+                            
+                        </div>
+                        <div class="add-to-cart">
+                            <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i><a href="{% url 'add_to_cart' product.id %}">add to cart</a></button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div id="slick-nav-2" class="products-slick-nav"></div>
+            </div>
+            <!-- /tab -->
+        </div>
+    </div>
+</div>
+					<!-- /Products tab & slick -->
+				</div>
+				<!-- /row -->
+			</div>
+			<!-- /container -->
+		</div>
+		<!-- /SECTION -->
+
+		
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+	    $(document).ready(function(){
+    $('.search-btn').on('click', function(e){
+        e.preventDefault();
+        var query = $('.input').val().trim();
+        $.ajax({
+            url: "{% url 'search_products' %}",
+            type: 'GET',
+            data: {'query': query},
+            success: function(data){
+                // Clear previous search results
+                $('#results-body').empty();
+                // Append new search results to the table body
+                data.forEach(function(product, index){
+                    var resultHtml = '<tr>';
+                    resultHtml += '<td><a href="product/' + product.id + '">' + product.name + '</a></td>';
+                    resultHtml += '<td>' + product.price + '</td>';
+                    resultHtml += '<td><img src="' + product.image + '" alt="' + product.name + '" style="max-width: 100px;"></td>';
+                    resultHtml += '</tr>';
+                    $('#results-body').append(resultHtml);
+                });
+            },
+            error: function(xhr, status, error){
+                console.error(xhr.responseText);
+            }
+        });
+    });
+});
+</script>
+		
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'app/layout/base.html' %}
+{% load static %}
+
+{% block content %}
+<h1 id="cart-title">Your Wishlist</h1>
+<div class="wishlist-items">
+<div class="wishlist">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <table class="table">
+                    <tbody>
+                        {% for wishlist_item in wishlist_items %}
+                        <tr>
+                            <td>
+                                <div class="card product-card">
+    <div class="row no-gutters">
+        <div class="col-md-2">
+            <img src="{{ wishlist_item.product.image.url }}" alt="{{ wishlist_item.product.name }}" width="100px">
+        </div>
+        <div class="col-md-4">
+            <div class="card-body">
+                <h5 class="card-title">{{ wishlist_item.product.name }}</h5>
+                <p class="card-text">{{ wishlist_item.product.category.name }}</p>
+                <a href="{% url 'product' wishlist_item.product.id %}" class="btn btn-primary">View Product</a>
+                <a href="{% url 'add_to_cart' wishlist_item.product.id %}" class="btn btn-primary">Add to Cart</a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!-- Bootstrap JS and jQuery (optional, for certain Bootstrap features) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+{% endblock %}

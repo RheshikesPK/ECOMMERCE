@@ -1,0 +1,195 @@
+{% extends 'app/layout/base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<!-- BREADCRUMB -->
+<div id="breadcrumb" class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h3 class="breadcrumb-header">Checkout</h3>
+                <ul class="breadcrumb-tree">
+                    <li><a href="#">Home</a></li>
+                    <li class="active">Checkout</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /BREADCRUMB -->
+
+<!-- SECTION -->
+<div class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-7">
+                <!-- Billing Details -->
+                <div class="billing-details">
+                    <div class="section-title">
+                        <h3 class="title">Shipping address</h3>
+                    </div>
+
+                    {% if shipping_address %}
+                        <!-- Display shipping address -->
+                        <p>Name: {{ shipping_address.name }}</p>
+                        <p>Email: {{ shipping_address.email }}</p>
+                        <p>Address: {{ shipping_address.address }}</p>
+                        <p>City: {{ shipping_address.city }}</p>
+                        <p>State: {{ shipping_address.state }}</p>
+                        <p>ZIP Code: {{ shipping_address.zip_code }}</p>
+                        <p>Mobile Number: {{ shipping_address.mobile_number }}</p>
+                    {% else %}
+                        <!-- Display form to add new address -->
+                        <form method="post" action="{% url 'save_address' %}">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <button type="submit" id="add-btn">Submit</button>
+                        </form>
+                    {% endif %}
+                </div>
+                <!-- /Billing Details -->
+            </div>
+
+            <!-- Order Details -->
+            <div class="col-md-5 order-details">
+                <div class="section-title text-center">
+                    <h3 class="title">Your Order</h3>
+                </div>
+                <div class="order-summary">
+                    <div class="order-col">
+                        <div><strong>PRODUCT</strong></div>
+                        <div><strong>TOTAL</strong></div>
+                    </div>
+                    <div class="order-products">
+                        {% for order_item in order_items %}
+                        <div class="order-col">
+                            <div>{{ order_item.quantity }}x {{ order_item.product.name }}</div>
+                            <div>₹{{ order_item.product.price }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="order-col">
+                        <div>Shipping</div>
+                        <div><strong>FREE</strong></div>
+                    </div>
+                    <div class="order-col">
+                        <div><strong>TOTAL</strong></div>
+                        <div><strong class="order-total">₹{{ total_price }}</strong></div>
+                    </div>
+                </div>
+                <div class="payment-method">
+                    <!-- Payment method options (for demonstration) -->
+                    <div class="input-radio">
+                        <input type="radio" name="payment" id="payment-1" checked>
+                        <label for="payment-1">
+                            <span></span>
+                            Direct Bank Transfer
+                        </label>
+                        
+                    </div>
+                </div>
+                <div class="input-checkbox">
+                    <input type="checkbox" id="terms">
+                    <label for="terms">
+                        <span></span>
+                        I've read and accept the <a href="#">terms & conditions</a>
+                    </label>
+                </div>
+                <form method="POST" id="payment-form">
+                    {% csrf_token %}
+					{% for order_item in order_items %}
+					<input type="hidden" id="order-id" value="{{ order_item.order.id }}">
+					{% endfor %}
+                    <div id="card-element"></div> <!-- Element for Stripe card input -->
+                    <button type="submit" class="primary-btn order-submit">Place order</button>
+                </form>
+            </div>
+            <!-- /Order Details -->
+        </div>
+    </div>
+</div>
+<!-- /SECTION -->
+
+<!-- Include Stripe.js -->
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const stripe = Stripe('pk_test_51PpmUz043xJZrQQTHiaTRkKnZfypSAP41wrp1a7oHiSgQ9X4XOLCgzCUMfMC8u2iBY6BgXg1B3xACwuqT3DaAPqY00I3TfuhCF'); // Replace with your actual Stripe publishable key
+    const elements = stripe.elements();
+    const cardElement = elements.create('card');
+    cardElement.mount('#card-element');
+
+    const form = document.querySelector('#payment-form');
+    const orderId = document.querySelector('#order-id').value; // Get the order ID from the hidden field
+
+    if (form) {
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            // Create a payment method
+            const {paymentMethod, error} = await stripe.createPaymentMethod({
+                type: 'card',
+                card: cardElement
+            });
+
+            if (error) {
+                console.error('Error creating payment method:', error);
+                alert('Error creating payment method: ' + error.message);
+                return;
+            }
+
+            // Fetch the amount from the template variable
+            const amount = parseInt('{{ total_price_in_paise }}', 10); // Ensure it's an integer
+
+            // Ensure amount is valid
+            if (isNaN(amount) || amount <= 0) {
+                alert('Invalid amount');
+                return;
+            }
+
+            // Send payment method ID, amount, and order ID to the backend
+            const response = await fetch("{% url 'process_payment' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    payment_method_id: paymentMethod.id,
+                    amount: amount,  // Amount in paise
+                    order_id: orderId // Include the order ID
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.error) {
+                console.error('Error processing payment:', result.error);
+                alert('Error processing payment: ' + result.error.message);
+                return;
+            }
+
+            // Confirm the payment with Stripe
+            const {error: confirmError} = await stripe.confirmCardPayment(result.client_secret);
+
+            if (confirmError) {
+                console.error('Error confirming payment:', confirmError);
+                alert('Error confirming payment: ' + confirmError.message);
+                return;
+            }
+
+            // Payment successful, show success message
+            // Redirect after a short delay
+            setTimeout(() => {
+                window.location.href = "{% url 'payment_success' %}";
+            });  // Adjust delay as needed
+        });
+    } else {
+        console.error('Payment form not found');
+    }
+});
+</script>
+
+{% endblock %}

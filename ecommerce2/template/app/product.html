@@ -1,0 +1,271 @@
+{% extends 'app/layout/base.html' %}
+{% load static %}
+
+{% block content %}
+
+		<!-- BREADCRUMB -->
+		<div id="breadcrumb" class="section">
+			<!-- container -->
+			<div class="container">
+				<!-- row -->
+				<div class="row">
+					<div class="col-md-12">
+						<ul class="breadcrumb-tree">
+							<li><a href="#">Home</a></li>
+							<li><a href="#">All Categories</a></li>
+							<li><a href="#">Accessories</a></li>
+							<li><a href="#">Headphones</a></li>
+							<li class="active">Product name goes here</li>
+						</ul>
+					</div>
+				</div>
+				<!-- /row -->
+			</div>
+			<!-- /container -->
+		</div>
+		<!-- /BREADCRUMB -->
+
+		<!-- SECTION -->
+		<div class="section">
+			<!-- container -->
+			<div class="container">
+				<!-- row -->
+				<div class="row">
+					<!-- Product main img -->
+					<div class="col-md-5 col-md-push-2">
+						<div id="product-main-img">
+							{% for product in products %}
+								<div class="product-preview">
+									<img src="{{ product.image.url }}" alt="">
+								</div>
+							{% endfor %}
+							{% for image in product_images %}
+                			<img src="{{ image.image1.url }}" alt="{{ product.name }}">
+                			<img src="{{ image.image2.url }}" alt="{{ product.name }}">
+							<img src="{{ image.image3.url }}" alt="{{ product.name }}">
+            				{% endfor %}
+						</div>
+					</div>
+					<!-- /Product main img -->
+
+					<!-- Product thumb imgs -->
+					<div class="col-md-2  col-md-pull-5">
+						<div id="product-imgs">
+							{% for product in products %}
+								<div class="product-preview">
+									<img src="{{ product.image.url }}" alt="">
+								</div>
+							{% endfor %}
+							{% for image in product_images %}
+                			<img src="{{ image.image1.url }}" alt="{{ product.name }}">
+                			<img src="{{ image.image2.url }}" alt="{{ product.name }}">
+							<img src="{{ image.image3.url }}" alt="{{ product.name }}">
+            				{% endfor %}
+						</div>
+					</div>
+					<!-- /Product thumb imgs -->
+
+					<!-- Product details -->
+					<div class="col-md-5">
+						<div class="product-details">
+							{% for product in products %}
+							<h2 class="product-name">{{ product.name }}</h2>
+							<!-- <div>
+								<div class="product-rating">
+									<i class="fa fa-star"></i>
+									<i class="fa fa-star"></i>
+									<i class="fa fa-star"></i>
+									<i class="fa fa-star"></i>
+									<i class="fa fa-star-o"></i>
+								</div>
+								<a class="review-link" href="#">10 Review(s) | Add your review</a>
+							</div> -->
+							<div>
+								<h3 class="product-price">{{ product.price }}</h3>
+								<span class="product-available">In Stock</span>
+							</div>
+							<p>${{ product.description }}</p>
+							
+							<div class="product-options">
+								<label>
+											<p>Size : {{ product.size }} inch</p>					
+								</label>
+								<label>
+									
+											<p>Color : {{ product.color }}</p>
+									
+								</label>
+							</div>
+
+							<div class="add-to-cart">
+								<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i><a href="{% url 'add_to_cart' product.id %}"> add to cart</a></button>
+							</div>
+
+							<form method="post" action="{% url 'add_to_wishlist' product.id %}">
+								{% csrf_token %}
+								<button type="submit" class="wishlist-btn"><i class="fa fa-heart-o"></i> Add to Wishlist</button>
+							</form>
+
+							
+							{% endfor %}	
+						</div>
+					</div>
+					<!-- /Product details -->
+
+					<!-- Product tab -->
+					<div class="col-md-12">
+						<div id="product-tab">
+							<!-- product tab nav -->
+							<ul class="tab-nav">
+								<li class="active"><a data-toggle="tab" href="#tab1">Description</a></li>
+								
+								<li><a data-toggle="tab" href="#tab3">Reviews</a></li>
+							</ul>
+							<!-- /product tab nav -->
+
+							<!-- product tab content -->
+							<div class="tab-content">
+								{% for product in products %}
+								<!-- tab1  -->
+								<div id="tab1" class="tab-pane fade in active">
+									<div class="row">
+										<div class="col-md-12">
+											<p>{{ product.description }}</p>
+										</div>
+									</div>
+								</div>
+								<!-- /tab1  -->
+
+								<!-- tab2  -->
+								
+								<!-- /tab2  -->
+
+								<!-- tab3  -->
+								<div id="tab3" class="tab-pane fade in">
+									<div class="row">
+
+										<!-- Reviews -->
+										<div class="col-md-6">
+											<div id="reviews">
+												<ul class="reviews">
+													{% for review in reviews %}
+													<li>
+														<div class="review-heading">
+															<h5 class="name">{{ review.user.username }}</h5>
+															<p class="date">{{ review.date|date:"d M Y, H:i A" }}</p>
+															<div class="review-rating">
+																{% for _ in review.stars %}
+																	<i class="fa fa-star"></i>
+																{% endfor %}
+																{% for _ in review.empty_stars %}
+																	<i class="fa fa-star-o empty"></i>
+																{% endfor %}
+															</div>
+														</div>
+														<div class="review-body">
+															<p>{{ review.review }}</p>
+														</div>
+													</li>
+													{% endfor %}
+												</ul>
+												<ul class="reviews-pagination">
+													{% if reviews.has_previous %}
+													<a href="?page={{ reviews.previous_page_number }}"><li><<</li></a>
+													{% endif %}
+													
+													{% for i in reviews.paginator.page_range %}
+    												<a href="?page={{ i }}"><li>{{ i }}</li></a>
+													{% endfor %}
+													{% if reviews.has_next %}
+    												<a href="?page={{ reviews.next_page_number }}"><li>>></li></a>
+													{% endif %}
+												</ul>
+											</div>
+										</div>
+										<!-- /Reviews -->
+
+										<!-- Review Form -->
+										<div class="col-md-6">
+											<div id="review-form">
+												<form class="review-form" action="{% url 'save' %}"method="post">
+													{% csrf_token %}
+													<input type="hidden" name="product_id" value="{{ product.id }}">
+                                    				{{ form.as_p }}
+													<div class="input-rating">
+														<span>Your Rating: </span>
+														<div class="stars">
+															<input id="star5" name="rating" value="5" type="radio"><label for="star5"></label>
+															<input id="star4" name="rating" value="4" type="radio"><label for="star4"></label>
+															<input id="star3" name="rating" value="3" type="radio"><label for="star3"></label>
+															<input id="star2" name="rating" value="2" type="radio"><label for="star2"></label>
+															<input id="star1" name="rating" value="1" type="radio"><label for="star1"></label>
+														</div>
+													</div>
+													<button class="primary-btn">Submit</button>
+												</form>
+											</div>
+										</div>
+										<!-- /Review Form -->
+									</div>
+								</div>
+								<!-- /tab3  -->
+								{% endfor %}
+							</div>
+							<!-- /product tab content  -->
+						</div>
+					</div>
+					<!-- /product tab -->
+				</div>
+				<!-- /row -->
+			</div>
+			<!-- /container -->
+		</div>
+		<!-- /SECTION -->
+
+		<!-- Section -->
+		<div class="section">
+			<!-- container -->
+			<div class="container">
+				<!-- row -->
+				<div class="row">
+
+					<div class="col-md-12">
+						<div class="section-title text-center">
+							<h3 class="title">Related Products</h3>
+						</div>
+					</div>
+
+					<!-- product -->
+					
+					
+
+					<div class="clearfix visible-sm visible-xs"></div>
+					<!-- product -->
+					{% for related_product in related_products %}
+					<div class="col-md-3 col-xs-6">
+    					<div class="product">
+        					<div class="product-img">
+            					<img src="{{ related_product.image.url }}" alt="{{ related_product.name }}">
+        					</div>
+        					<div class="product-body">
+            					<p class="product-category">{{ related_product.category.name }}</p>
+            					<h3 class="product-name"><a href="{% url 'product' related_product.id %}">{{ related_product.name }}</a></h3>
+            					<h4 class="product-price">${{ related_product.price }}</h4>
+        					</div>
+        					<div class="add-to-cart">
+            					<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i><a href="{% url 'add_to_cart' related_product.id %}"> add to cart</a></button>
+        					</div>
+    					</div>
+					</div>
+					{% endfor %}
+					<!-- /product -->
+
+				</div>
+				<!-- /row -->
+			</div>
+			<!-- /container -->
+		</div>
+		<!-- /Section -->
+
+		
+{% endblock %}

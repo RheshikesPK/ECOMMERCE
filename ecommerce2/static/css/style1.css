@@ -1,0 +1,148 @@
+#product-row{
+    margin-bottom: 30px;
+}
+
+.signup-container {
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 600px;
+}
+.signup-container h2 {
+    color: #ff0000; /* Red color for the heading */
+    text-align: center;
+}
+.signup-form {
+    margin-top: 20px;
+}
+.signup-form label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333333;
+}
+.signup-form input[type="text"],
+.signup-form input[type="email"],
+.signup-form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #cccccc;
+    border-radius: 3px;
+}
+.signup-form button[type="submit"] {
+    background-color: #ff0000; /* Red color for the button */
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.signup-form button[type="submit"]:hover {
+    background-color: #cc0000; /* Darker shade of red on hover */
+}
+
+#filter-button{
+    background-color: #cc0000; /* Red color for the button */
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.wishlist{
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+
+
+
+
+#search-results {
+    /* Apply styles for the search results container */
+    /* Example styles */
+    margin-top: 0px;
+}
+
+
+
+.table-container {
+    position: relative; /* Required for absolute positioning */
+    height: auto; /* or set a fixed height as needed */
+}
+
+#results-body {
+    position: absolute;
+    z-index: 1;
+    background-color: #ffffff;
+    width: 350px;
+    max-height: 180px; /* Set the maximum height as needed */
+    overflow-y: auto;
+    padding-left: 30px;
+    /* Optional: Add border for visual clarity */
+}
+
+#cart-title {
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom:40px ;
+}
+
+.wishlist-items{
+    margin-left: 100px;
+    margin-right: 100px;
+}
+
+
+.remove-item-button {
+    background-color: #cc0000; /* Red color */
+    color: white; /* White text */
+    border: none; /* No border */
+    padding: 8px 16px; /* Padding */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Cursor style */
+}
+
+.remove-item-button:hover {
+    background-color: #c82333; /* Darker red color on hover */
+}
+
+#add-btn{
+    background-color: #cc0000; /* Red color */
+    color: white; /* White text */
+    border: none; /* No border */
+    padding: 8px 16px; /* Padding */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Cursor style */
+}
+
+#hot-deal{
+    margin-bottom: 50px;
+}
+
+#payment-form {
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    height: 60px;
+}
+
+.wishlist-btn {
+    background-color: #c90d0d; /* Bright red background color */
+    color: #ffffff; /* White text color */
+    border: none; /* Remove default border */
+    padding: 10px 20px; /* Add some padding for a comfortable size */
+    border-radius: 10px; /* Slightly rounded corners */
+    font-size: 14px; /* Adjust the font size */
+    font-weight: bold; /* Make the text bold */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    transition: background-color 0.3s ease; /* Smooth transition for background color */
+}

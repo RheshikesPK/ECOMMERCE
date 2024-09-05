@@ -1,0 +1,14 @@
+
+{% extends 'app/layout/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="signup-container">
+    <h2>Signup</h2>
+    <form method="post" class="signup-form" action="{% url 'register' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Sign Up</button>
+    </form>
+</div>
+{% endblock %}
