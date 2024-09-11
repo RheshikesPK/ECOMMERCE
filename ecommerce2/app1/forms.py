@@ -35,4 +35,4 @@ class ContactForm(forms.Form):
     city = forms.CharField(widget=forms.TextInput(attrs={'class': 'input', 'placeholder': 'City'}))
     state = forms.CharField(widget=forms.TextInput(attrs={'class': 'input', 'placeholder': 'State'}))
     zip_code = forms.CharField(widget=forms.TextInput(attrs={'class': 'input', 'placeholder': 'ZIP Code'}))
-    mob = forms.CharField(widget=forms.TextInput(attrs={'class': 'input', 'placeholder': 'Telephone'})) 
+    

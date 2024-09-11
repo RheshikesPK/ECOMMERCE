@@ -42,7 +42,7 @@ admin.site.register(Review,ReviewAdmin)
 
 
 class ShippingAddressAdmin(admin.ModelAdmin):
-    list_display = ['user','name','email','address','city','state','zip_code','mobile_number']
+    list_display = ['user','name','email','address','city','state','zip_code']
 admin.site.register(ShippingAddress,ShippingAddressAdmin)
 
 admin.site.register(OrderPayment)

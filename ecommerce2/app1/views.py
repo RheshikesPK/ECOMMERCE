@@ -6,7 +6,7 @@ from .models import Product,ProductImages,Cart,CartItem,Review,WishList,WishList
 from django.urls import reverse_lazy
 from .forms import CustomUserCreationForm
 from .models import UserProfile,ShippingAddress, OrderPayment
-from django.views.generic.edit import FormView,DeleteView
+from django.views.generic.edit import FormView, DeleteView
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -17,6 +17,8 @@ from django.db import transaction
 from django.conf import settings
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import ListView
+from django.views.generic.detail import DetailView
 import stripe
 import json
 
@@ -41,7 +43,7 @@ class StoreView(View):
         products = Product.objects.all()
         if min_price and max_price:
             products = products.filter(price__range=(min_price, max_price))
-        product_paginator =Paginator(products,4)
+        product_paginator =Paginator(products,3)
         products=product_paginator.get_page(page)
         top_selling_product = Product.objects.annotate(total_quantity_ordered=Sum('orderitem__quantity')).order_by('-total_quantity_ordered').first()
         other_top_products = Product.objects.annotate(total_quantity_ordered=Sum('orderitem__quantity')).order_by('-total_quantity_ordered')[1:6]
@@ -219,7 +221,7 @@ class AddToCartView(LoginRequiredMixin, View):
             cart_item.quantity += 1
             cart_item.save()
 
-        return redirect('store')
+        return redirect(request.META.get('HTTP_REFERER', 'default-view'))
         
 
 class UpdateCartView(LoginRequiredMixin, View):
@@ -315,7 +317,9 @@ class SaveReviewView(View):
             review = Review.objects.create(user=user, product=product, rating=rating, review=review_text, date=date)  # Redirect to a success URL after saving
             review.save()
         
-        return redirect('store')
+        return redirect(request.META.get('HTTP_REFERER', 'default-view'))
+    
+    
 
 
 class SearchProductsView(View):
@@ -353,7 +357,7 @@ class SaveAddressView(View):
             city = form.cleaned_data['city']
             state = form.cleaned_data['state']
             zip_code = form.cleaned_data['zip_code']
-            mob = form.cleaned_data['mob']
+            
 
             
             shipping_address = ShippingAddress.objects.create(
@@ -364,9 +368,9 @@ class SaveAddressView(View):
                 city=city,
                 state=state,
                 zip_code=zip_code,
-                mobile_number=mob
+               
             )
-            return redirect('checkout')
+            return redirect(request.META.get('HTTP_REFERER', 'default-view'))
 
 
 
@@ -557,4 +561,20 @@ class PaymentSuccessView(View):
         return render(request, 'app/payment_success.html')
 
 
-  
+class OrderDetailView(LoginRequiredMixin, ListView):
+    model = OrderPayment
+    template_name = 'app/order_details.html'
+    context_object_name = 'orders'
+
+    # This function is used to filter the orders for the logged-in user
+    def get_queryset(self):
+        return OrderPayment.objects.filter(user=self.request.user)
+    
+class OrderView(DetailView):
+    model = OrderPayment
+    template_name = 'app/myorder.html'
+    context_object_name = 'order'
+
+    def get_object(self, queryset=None):
+        obj = get_object_or_404(OrderPayment, pk=self.kwargs.get('pk'))
+        return obj

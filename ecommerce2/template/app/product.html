@@ -3,27 +3,7 @@
 
 {% block content %}
 
-		<!-- BREADCRUMB -->
-		<div id="breadcrumb" class="section">
-			<!-- container -->
-			<div class="container">
-				<!-- row -->
-				<div class="row">
-					<div class="col-md-12">
-						<ul class="breadcrumb-tree">
-							<li><a href="#">Home</a></li>
-							<li><a href="#">All Categories</a></li>
-							<li><a href="#">Accessories</a></li>
-							<li><a href="#">Headphones</a></li>
-							<li class="active">Product name goes here</li>
-						</ul>
-					</div>
-				</div>
-				<!-- /row -->
-			</div>
-			<!-- /container -->
-		</div>
-		<!-- /BREADCRUMB -->
+		
 
 		<!-- SECTION -->
 		<div class="section">
@@ -82,7 +62,12 @@
 							</div> -->
 							<div>
 								<h3 class="product-price">{{ product.price }}</h3>
-								<span class="product-available">In Stock</span>
+								{% if product.stock > 0 %}
+    							<span class="product-available">In Stock</span>
+								{% else %}
+    							<span class="product-unavailable">Out of Stock</span>
+								{% endif %}
+
 							</div>
 							<p>${{ product.description }}</p>
 							
@@ -201,7 +186,7 @@
 															<input id="star1" name="rating" value="1" type="radio"><label for="star1"></label>
 														</div>
 													</div>
-													<button class="primary-btn">Submit</button>
+													<button class="primary-btn" onclick="validateRating(event)">Submit</button>
 												</form>
 											</div>
 										</div>
@@ -267,5 +252,17 @@
 		</div>
 		<!-- /Section -->
 
+		<script>
+			function validateRating(event) {
+				// Check if any rating is selected
+				const rating = document.querySelector('input[name="rating"]:checked');
+				
+				if (!rating) {
+					event.preventDefault();  // Prevent form submission
+					alert('Please select a rating before submitting.');
+				}
+			}
+		</script>
 		
+
 {% endblock %}

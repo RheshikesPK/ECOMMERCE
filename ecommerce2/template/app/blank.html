@@ -76,6 +76,15 @@
             max-width: 100%;
         }
     }
+
+    .no-item{
+        width:500px;
+        height:200px;
+        margin-left: 44%;
+        font-size: large;
+        margin-top: 50px;
+        font-weight: 300;
+    }
 </style>
 <h1 class="cart-title">Shopping Cart</h1>
 {% if cart_items %}
@@ -132,7 +141,7 @@
 
 
 {% else %}
-<div style="background-color: red;">{{ msg }}</div>
+<div class="no-item">No Item in your cart</div>
 {% endif %}
     
 {% endblock %}

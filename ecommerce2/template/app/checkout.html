@@ -39,7 +39,7 @@
                         <p>City: {{ shipping_address.city }}</p>
                         <p>State: {{ shipping_address.state }}</p>
                         <p>ZIP Code: {{ shipping_address.zip_code }}</p>
-                        <p>Mobile Number: {{ shipping_address.mobile_number }}</p>
+                        
                     {% else %}
                         <!-- Display form to add new address -->
                         <form method="post" action="{% url 'save_address' %}">

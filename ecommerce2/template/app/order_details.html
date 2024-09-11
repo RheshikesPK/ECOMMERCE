@@ -1,0 +1,80 @@
+{% extends 'app/layout/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    table {
+        width: 70%;
+        border-collapse: collapse;
+        margin: 20px 0; /* Add margin around the table */
+        margin-left: 200px;
+    }
+    table, th, td {
+        border: 1px solid #ddd; /* Light border for a cleaner look */
+    }
+    th, td {
+        padding: 12px 15px; /* Adjust padding for better spacing */
+        text-align: left;
+        vertical-align: middle; /* Align content in the middle */
+    }
+    thead {
+        background-color: #f4f4f4; /* Light grey background for header */
+    }
+    th {
+        font-weight: bold;
+        color: #333; /* Darker text for better readability */
+    }
+    tbody tr:nth-child(even) {
+        background-color: #f9f9f9; /* Alternating row colors for readability */
+    }
+    tbody tr:hover {
+        background-color: #f1f1f1; /* Highlight row on hover */
+    }
+    button {
+        background-color: #2b81dc; /* Bootstrap primary color */
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    button:hover {
+        background-color: #0056b3; /* Darker blue on hover */
+    }
+    a {
+        text-decoration: none; /* Remove underline from links */
+    }
+</style>
+
+<table>
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Total Amount</th>
+            <th>Paid</th>
+            <th>Action</th> <!-- New column for action buttons -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.order_id }}</td>
+            <td>{{ order.amount }}</td>
+            <td>{{ order.paid|yesno:"Yes,No" }}</td>
+            <td>
+                <a href="{% url 'view_order' order.id %}">
+                    <button>View Order</button>
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">No orders found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

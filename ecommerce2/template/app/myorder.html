@@ -1,0 +1,31 @@
+{% extends 'app/layout/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<h1>Order Details</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Total Amount:</th>
+            <td>{{ order.amount }}</td>
+        </tr>
+        <tr>
+            <th>Products:</th>
+            <td>
+                <ul>
+                    {% for item in order.products %}
+                        <li>
+                            {{ item.product_name }}: {{ item.quantity }} (Price: {{ item.price }})
+                        </li>
+                    {% empty %}
+                        <li>No products found.</li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+    </thead>
+</table>
+
+{% endblock %}

@@ -97,7 +97,7 @@ class ShippingAddress(models.Model):
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100,null=True)
     zip_code = models.CharField(max_length=20)
-    mobile_number = models.CharField(max_length=20)
+    
 
     def __str__(self):
         return f"{self.name} - {self.address}, {self.city}, {self.city}, {self.zip_code}"
@@ -108,3 +108,6 @@ class OrderPayment(models.Model):
     amount=models.IntegerField(default=0)
     paid=models.BooleanField(default=False)
     products = models.JSONField(default=dict)
+
+    def __str__(self):
+        return self.order_id
