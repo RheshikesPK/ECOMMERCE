@@ -3,29 +3,73 @@
 
 {% block content %}
 
-<h1>Order Details</h1>
+<style>
+    .table-responsive{
+        width: 80%;
+        margin-left: 170px;
+    }
+    .heading-center {
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 60px;
+}
+</style>
 
-<table>
-    <thead>
-        <tr>
-            <th>Total Amount:</th>
-            <td>{{ order.amount }}</td>
-        </tr>
-        <tr>
-            <th>Products:</th>
-            <td>
+<h1 class="heading-center">Order Details</h1>
+
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>PRODUCT</th>
+                <th>TOTAL</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <ul class="list-unstyled">
+                        {% for item in order.products %}
+                        <li>{{ item.product_name }} × {{ item.quantity }}</li>
+                        {% empty %}
+                        <li>No products found.</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td class="text-success">
                 <ul>
                     {% for item in order.products %}
-                        <li>
-                            {{ item.product_name }}: {{ item.quantity }} (Price: {{ item.price }})
-                        </li>
-                    {% empty %}
-                        <li>No products found.</li>
+                    <li>₹{{ item.price }}</li>
                     {% endfor %}
                 </ul>
-            </td>
-        </tr>
-    </thead>
-</table>
+                </td>
+            </tr>
+            
+            <tr></tr>
+                <th>PAYMENT STATUS</th>
+                <td>{{ order.paid|yesno:"Yes,No" }}</td>
+            </tr>
+           
+            
+            <tr>
+                <th>TOTAL:</th>
+                <td class="text-success">₹{{ order.amount }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="billing-details">
+        <div class="section-title">
+            <h3 class="title">Shipping address</h3>
+        </div>
+            <!-- Display shipping address -->
+            <p>Name: {{ shipping_address.name }}</p>
+            <p>Address: {{ shipping_address.address }}</p>
+            <p>City: {{ shipping_address.city }}</p>
+            <p>State: {{ shipping_address.state }}</p>
+            <p>ZIP Code: {{ shipping_address.zip_code }}</p>
+            
+        
+    </div>
+</div>
 
 {% endblock %}

@@ -43,7 +43,7 @@ class UserProfile(models.Model):
         ('male', 'Male'),
         ('female', 'Female'),
     ]
-    user = models.OneToOneField('auth.User', on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     email=models.EmailField(default=0)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     age=models.IntegerField()
@@ -92,7 +92,6 @@ class WishListItem(models.Model):
 class ShippingAddress(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='shipping_addresses')
     name = models.CharField(max_length=100)  # Name of the recipient
-    email = models.EmailField()
     address = models.CharField(max_length=255)
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100,null=True)

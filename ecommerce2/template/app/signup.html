@@ -7,7 +7,15 @@
     <h2>Signup</h2>
     <form method="post" class="signup-form" action="{% url 'register' %}">
         {% csrf_token %}
-        {{ form.as_p }}
+        <p>Username :{{ form.username }}</p>
+        <p>Password :{{ form.password1 }}</p>
+        <p>Confirm Password :{{ form.password2 }}</p>
+        <p>Email :{{ form.email }}</p>
+        <p>Mobile :{{ form.phone_number }}</p>
+        <p>Age :{{ form.age }}</p>
+        <p>Gender :{{ form.gender }}</p>
+        
+
         <button type="submit">Sign Up</button>
     </form>
 </div>

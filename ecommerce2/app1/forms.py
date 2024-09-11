@@ -11,6 +11,7 @@ class SignInForm(AuthenticationForm):
     password=forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control'}))
 
 class CustomUserCreationForm(UserCreationForm):
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'input', 'placeholder': 'Email'}))
     phone_number = forms.CharField(max_length=20, required=False)
     age = forms.IntegerField()
     gender = forms.ChoiceField(choices=UserProfile.GENDER_CHOICES, required=False)
@@ -30,7 +31,6 @@ class ReviewForm(forms.ModelForm):
 
 class ContactForm(forms.Form):
     name = forms.CharField(widget=forms.TextInput(attrs={'class': 'input', 'placeholder': 'First Name'}))
-    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'input', 'placeholder': 'Email'}))
     address = forms.CharField(widget=forms.TextInput(attrs={'class': 'input', 'placeholder': 'Address'}))
     city = forms.CharField(widget=forms.TextInput(attrs={'class': 'input', 'placeholder': 'City'}))
     state = forms.CharField(widget=forms.TextInput(attrs={'class': 'input', 'placeholder': 'State'}))

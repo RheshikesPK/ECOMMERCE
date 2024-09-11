@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category,Product,Cart,CartItem,Order,OrderItem,ProductImages,Review,ShippingAddress,OrderPayment
+from .models import Category,Product,Cart,CartItem,Order,OrderItem,ProductImages,Review,ShippingAddress,OrderPayment,UserProfile
 from django.utils.html import format_html
 
 # Register your models here.
@@ -42,7 +42,8 @@ admin.site.register(Review,ReviewAdmin)
 
 
 class ShippingAddressAdmin(admin.ModelAdmin):
-    list_display = ['user','name','email','address','city','state','zip_code']
+    list_display = ['user','name','address','city','state','zip_code']
 admin.site.register(ShippingAddress,ShippingAddressAdmin)
 
 admin.site.register(OrderPayment)
+admin.site.register(UserProfile)

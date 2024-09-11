@@ -352,7 +352,6 @@ class SaveAddressView(View):
 
             
             name = form.cleaned_data['name']
-            email = form.cleaned_data['email']
             address = form.cleaned_data['address']
             city = form.cleaned_data['city']
             state = form.cleaned_data['state']
@@ -363,7 +362,6 @@ class SaveAddressView(View):
             shipping_address = ShippingAddress.objects.create(
                 user=user_profile,  # Pass the UserProfile instance
                 name=name,
-                email=email, 
                 address=address,
                 city=city,
                 state=state,
@@ -463,7 +461,6 @@ def process_payment(request):
             
             print('Received data:', data)
 
-            
             intent = stripe.PaymentIntent.create(
                 amount=amount,
                 currency='inr',
@@ -509,7 +506,7 @@ def process_payment(request):
                 # Save order payment with product details
                 OrderPayment.objects.create(
                     user=request.user,
-                    amount=amount,
+                    amount=amount/100,
                     order_id=order_id,
                     paid=True,
                     products=products,  # Store product details in the OrderPayment model
@@ -578,3 +575,16 @@ class OrderView(DetailView):
     def get_object(self, queryset=None):
         obj = get_object_or_404(OrderPayment, pk=self.kwargs.get('pk'))
         return obj
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        order = self.get_object()
+
+        # Fetch the UserProfile related to the user in the order
+        user_profile = get_object_or_404(UserProfile, user=order.user)
+
+        # Fetch the shipping address related to the UserProfile
+        shipping_address = user_profile.shipping_addresses.first()  # Or use .all() if there are multiple addresses
+
+        context['shipping_address'] = shipping_address
+        return context

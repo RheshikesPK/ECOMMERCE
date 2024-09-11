@@ -99,9 +99,10 @@
                 <li><a href="{% url 'mobile' id=2 %}">Smartphones</a></li>
                 <li><a href="{% url 'camera' id=3 %}">Cameras</a></li>
                 <li><a href="{% url 'accessories' id=4 %}">Accessories</a></li>
-                <li><a href="{% url 'order-details' %}">Orders</a></li>
                 {% if user.is_authenticated %}
+                <li><a href="{% url 'order-details' %}">Orders</a></li>
                 <li><a href="{% url 'signout' %}">SIGNOUT</a></li>
+
                            
                 {% else %}
                 <li><a href="{% url 'register' %}">SIGNUP</a></li>
