@@ -1,6 +1,6 @@
 from django.urls import path
 from django.shortcuts import render
-from .views import IndexView, StoreView, ProductView,SignOutView,CartView, LaptopView, MobileView,CameraView, AccessoriesView,RegisterView,LoginView,CheckoutView,AddToCartView,GetCartItemsView,WishlistView, SaveReviewView, SearchProductsView, AddToWishlistView,UpdateCartView,CartRemove,SaveAddressView, GetWishlistItemsView,PaymentSuccessView,OrderDetailView,OrderView
+from .views import IndexView, StoreView, ProductView,SignOutView,CartView, LaptopView, MobileView,CameraView, AccessoriesView,RegisterView,LoginView,CheckoutView,AddToCartView,GetCartItemsView,WishlistView, SaveReviewView, SearchProductsView, AddToWishlistView,UpdateCartView,CartRemove,SaveAddressView, GetWishlistItemsView,PaymentSuccessView,OrderDetailView,OrderView,RemoveFromWishlistView
 from .views import process_payment
 
 urlpatterns = [
@@ -30,6 +30,7 @@ urlpatterns = [
     path('payment-success/', PaymentSuccessView.as_view(), name='payment_success'),
     path('order-details/', OrderDetailView.as_view(), name='order-details'),
     path('order/<int:pk>/',OrderView.as_view(), name='view_order'),
+    path('wishlist/remove/<int:product_id>/', RemoveFromWishlistView.as_view(), name='remove_from_wishlist'),
 
 
     # Other URL patterns

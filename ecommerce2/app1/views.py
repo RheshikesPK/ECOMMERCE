@@ -343,34 +343,33 @@ class AddToWishlistView(View):
         return redirect('wishlist')  # Redirect to wishlist page
 
 class SaveAddressView(View):    
+    def get(self, request):
+        form = ContactForm()
+        return render(request, 'checkout.html', {'form': form})
+
     def post(self, request):
-        user=request.user
+        user = request.user
         form = ContactForm(request.POST)
         if form.is_valid():
-            
             user_profile = UserProfile.objects.get(user=request.user)
 
-            
             name = form.cleaned_data['name']
             address = form.cleaned_data['address']
             city = form.cleaned_data['city']
             state = form.cleaned_data['state']
             zip_code = form.cleaned_data['zip_code']
-            
 
-            
-            shipping_address = ShippingAddress.objects.create(
-                user=user_profile,  # Pass the UserProfile instance
+            # Save the shipping address
+            ShippingAddress.objects.create(
+                user=user_profile,
                 name=name,
                 address=address,
                 city=city,
                 state=state,
                 zip_code=zip_code,
-               
             )
-            return redirect(request.META.get('HTTP_REFERER', 'default-view'))
-
-
+            return redirect('checkout') 
+        return redirect(request.META.get('HTTP_REFERER', 'default-view'))
 
 # class CheckoutView(View):
 #     def post(self, request):
@@ -442,7 +441,6 @@ class CheckoutView(View):
 
 stripe.api_key = 'sk_test_51PpmUz043xJZrQQTaG2ykPbTVQql9pkvYLCwbjFGMMk5aR3n62iPHzbsNfGlj2OOqlXFsrXgpQNIrgUz5t287aRI00FdR5UGmD'
 
-
 @csrf_exempt
 def process_payment(request):
     if request.method == 'POST':
@@ -453,12 +451,10 @@ def process_payment(request):
             amount = data.get('amount')
             order_id = data.get('order_id')
 
-            
             if not amount or not isinstance(amount, int) or amount <= 0:
                 print(f'Invalid amount: {amount}')
                 return JsonResponse({'error': 'Invalid or missing amount'}, status=400)
 
-            
             print('Received data:', data)
 
             intent = stripe.PaymentIntent.create(
@@ -467,59 +463,51 @@ def process_payment(request):
                 payment_method=payment_method_id,
                 automatic_payment_methods={'enabled': True},
                 confirm=True,
-                return_url='https://yourdomain.com/payment_success/' 
+                return_url='https://yourdomain.com/payment_success/'
             )
 
-
-
-            
             if intent.status == 'succeeded':
-
-               
                 if order_id:
-                    
-                    
+                    # Handle order processing
                     order_items = OrderItem.objects.filter(order_id=order_id)
                     products = [
-                    {
-                        'product_id': item.product.id,
-                        'product_name': item.product.name,
-                        'quantity': item.quantity,
-                        'price': float(item.product.price),
-                    }
-                    for item in order_items
-                ]
-
+                        {
+                            'product_id': item.product.id,
+                            'product_name': item.product.name,
+                            'quantity': item.quantity,
+                            'price': float(item.product.price),
+                        }
+                        for item in order_items
+                    ]
 
                     for item in order_items:
                         product = Product.objects.get(id=item.product.id)
                         stock_str = int(product.stock)
                         if stock_str >= item.quantity:
                             stock_str -= item.quantity
-                            product.stock=stock_str
+                            product.stock = stock_str
                             product.save()
                         else:
                             print(f'Insufficient stock for product ID {item.product.id}')
 
+                    # Save order payment with product details
+                    OrderPayment.objects.create(
+                        user=request.user,
+                        amount=amount / 100,
+                        order_id=order_id,
+                        paid=True,
+                        products=products,  # Store product details in the OrderPayment model
+                    )
 
+                    # Remove items from the cart
+                    cart = Cart.objects.filter(user=request.user).first()
+                    if cart:
+                        CartItem.objects.filter(cart=cart, products__in=[item.product for item in order_items]).delete()
 
-                # Save order payment with product details
-                OrderPayment.objects.create(
-                    user=request.user,
-                    amount=amount/100,
-                    order_id=order_id,
-                    paid=True,
-                    products=products,  # Store product details in the OrderPayment model
-                )
-                
-
-
-                    
-
-                if order_id:
+                    # Optionally delete the order
                     try:
                         order = Order.objects.get(id=order_id)
-                        OrderItem.objects.filter(order=order).delete()  
+                        OrderItem.objects.filter(order=order).delete()
                         print(f'Order items and order with ID {order_id} deleted from the cart.')
                     except Order.DoesNotExist:
                         print(f'Order with ID {order_id} does not exist.')
@@ -588,3 +576,21 @@ class OrderView(DetailView):
 
         context['shipping_address'] = shipping_address
         return context
+    
+
+class RemoveFromWishlistView(View):
+    def get(self, request, product_id):
+        # Get the product to remove from the wishlist
+        product = get_object_or_404(Product, id=product_id)
+        
+        # Get the user's wishlist
+        wishlist = get_object_or_404(WishList, user=request.user)
+        
+        # Find the wishlist item to delete
+        wishlist_item = WishListItem.objects.filter(product=product, wishlist=wishlist).first()
+
+        if wishlist_item:
+            wishlist_item.delete()
+        
+        # Redirect to the wishlist page or any other page
+        return redirect(reverse_lazy('wishlist'))

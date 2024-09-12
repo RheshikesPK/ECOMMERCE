@@ -24,6 +24,7 @@
                 <p class="card-text">{{ wishlist_item.product.category.name }}</p>
                 <a href="{% url 'product' wishlist_item.product.id %}" class="btn btn-primary">View Product</a>
                 <a href="{% url 'add_to_cart' wishlist_item.product.id %}" class="btn btn-primary">Add to Cart</a>
+                <a href="{% url 'remove_from_wishlist' wishlist_item.product.id %}" class="btn btn-primary">Remove</a>
                 
                 
                 
