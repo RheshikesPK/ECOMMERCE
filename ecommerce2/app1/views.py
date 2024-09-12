@@ -360,7 +360,7 @@ class SaveAddressView(View):
             zip_code = form.cleaned_data['zip_code']
 
             # Save the shipping address
-            ShippingAddress.objects.create(
+            shipping_address=ShippingAddress.objects.create(
                 user=user_profile,
                 name=name,
                 address=address,
@@ -368,6 +368,8 @@ class SaveAddressView(View):
                 state=state,
                 zip_code=zip_code,
             )
+            shipping_address.save()
+
             return redirect('checkout') 
         return redirect(request.META.get('HTTP_REFERER', 'default-view'))
 
@@ -408,33 +410,97 @@ class SaveAddressView(View):
 
 
 class CheckoutView(View):
+    def get(self, request):
+        user = request.user
+        user_profile = UserProfile.objects.get(user=user)
+
+        # Fetch the shipping address for the user
+        shipping_address = ShippingAddress.objects.filter(user=user_profile).first()
+
+        # Fetch the last order for the user
+        order = Order.objects.filter(user=user).order_by('-id').first()
+
+        if not order:
+            # Handle the case where there's no order for the user
+            return render(request, 'app/checkout.html', { 'message': 'No active orders found.' })
+
+        # Retrieve all the order items for this order
+        order_items = OrderItem.objects.filter(order=order)
+
+        # Debug: Check if order_items are retrieved
+        if not order_items.exists():
+            print("No order items found for this order.")
+
+        # Debug: Print each order item and its total_price
+        for item in order_items:
+            print(f"Product: {item.product.name}, Total Price: {item.total_price}")
+
+        # Calculate the total price of the order
+        total_price = order_items.aggregate(Sum('total_price'))['total_price__sum'] or 0
+
+        # Debug: Print the calculated total price
+        print("Total Price Calculated:", total_price)
+        total_price_in_paise = total_price * 100
+
+        return render(request, 'app/checkout.html', {
+            'order': order,
+            'order_items': order_items,
+            'shipping_address': shipping_address,
+            'total_price': total_price,
+            'total_price_in_paise': total_price_in_paise,  # Pass total price to the template
+        })
+
     def post(self, request):
         user = request.user
         cart = Cart.objects.filter(user=user).first()
         order_items = []
+        total_price = 0  # Initialize total price for the order
 
         if cart:
+            # Create the Order
             order = Order.objects.create(user=user)
-            total_price = 0
 
             with transaction.atomic():
+                # Iterate over cart items to create OrderItems and calculate total price
                 for cart_item in cart.cartitem_set.all():
-                    order_item = OrderItem.objects.create(order=order, product=cart_item.products, quantity=cart_item.quantity)
-                    order_items.append(order_item)
-                    total_price += cart_item.products.price * cart_item.quantity
+                    item_total_price = cart_item.products.price * cart_item.quantity
 
+                    # Create OrderItem and save total_price in the OrderItem table
+                    order_item = OrderItem.objects.create(
+                        order=order,
+                        product=cart_item.products,
+                        quantity=cart_item.quantity,
+                        total_price=item_total_price  # Save total price per item
+                    )
+                    order_items.append(order_item)
+
+                    # Add to order's total price
+                    total_price += item_total_price
+
+                # Save the total price of the order
                 order.total_price = total_price
                 order.save()
 
+            # Get user's shipping address
             user_profile = UserProfile.objects.get(user=user)
             shipping_address = ShippingAddress.objects.filter(user=user_profile).first()
 
+            # Prepare the form
             form = ContactForm()
-            
+
+            # Convert total price to paise (for some payment gateways like Stripe)
             total_price_in_paise = total_price * 100
 
-            
-            return render(request, 'app/checkout.html', {'form': form, 'order_items': order_items, 'total_price': total_price, 'shipping_address': shipping_address,'total_price_in_paise' :total_price_in_paise})
+            return render(request, 'app/checkout.html', {
+                'form': form,
+                'order_items': order_items,
+                'total_price': total_price,  # Pass total order price
+                'shipping_address': shipping_address,
+                'total_price_in_paise': total_price_in_paise,  # Pass price in paise if needed for payment processing
+            })
+
+        return render(request, 'app/checkout.html', { 'message': 'No cart found for this user.' })
+
 
 
 
